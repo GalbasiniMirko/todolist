@@ -1,0 +1,32 @@
+package models
+
+import (
+	"database/sql"
+)
+
+type Task struct {
+	Id          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Date        string `json:"date"`
+	State       string `json:"state"`
+}
+
+func GetAllTasks(db *sql.DB) ([]Task, error) {
+	rows, err := db.Query("SELECT * FROM Tasks")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []Task
+	for rows.Next() {
+		var t Task
+		if err := rows.Scan(&t.Id, &t.Title, &t.Description, &t.Date, &t.State); err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, t)
+	}
+
+	return tasks, nil
+}
