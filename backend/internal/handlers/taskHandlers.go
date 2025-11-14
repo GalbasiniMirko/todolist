@@ -100,3 +100,22 @@ func (a *App) EditTask(c *gin.Context) {
 		"message": "Task edited successfully",
 	})
 }
+
+func (a *App) DeleteTask(c *gin.Context) {
+	idParam := c.Params.ByName("id")
+	idTask, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task id"})
+		return
+	}
+
+	if err := models.DeleteTask(a.DB, idTask); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting task: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Task deleted successfully",
+	})
+}

@@ -59,3 +59,9 @@ func EditTask(db *sql.DB, t Task, idTask int) error {
 
 	return err
 }
+
+func DeleteTask(db *sql.DB, idTask int) error {
+	_, err := db.Exec("DELETE FROM Tasks WHERE Id=?", idTask)
+
+	return err
+}
