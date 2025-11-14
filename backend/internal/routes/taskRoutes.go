@@ -8,4 +8,5 @@ import (
 func SetupRoutes(router *gin.Engine, app *handlers.App) {
 	router.GET("/tasks", app.GetAllTasks)
 	router.POST("/tasks", app.CreateTask)
+	router.PUT("/tasks/:id", app.EditTask)
 }

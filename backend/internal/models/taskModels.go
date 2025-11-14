@@ -45,3 +45,17 @@ func CreateTask(db *sql.DB, t Task) error {
 
 	return err
 }
+
+func EditTask(db *sql.DB, t Task, idTask int) error {
+	parsedDate, err := time.Parse(time.RFC3339, t.Date)
+	if err != nil {
+		return err
+	}
+
+	parsedDate = parsedDate.UTC()
+	mysqlDate := parsedDate.Format("2006-01-02 15:04:05")
+
+	_, err = db.Exec("UPDATE Tasks SET Title=?, Description=?, Date=?, State=? WHERE Id=?", t.Title, t.Description, mysqlDate, t.State, idTask)
+
+	return err
+}
