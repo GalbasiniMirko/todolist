@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/GalbasiniMirko/todolist/backend/internal/handlers"
+	"github.com/GalbasiniMirko/todolist/backend/internal/routes"
 	"github.com/GalbasiniMirko/todolist/backend/internal/utils/database"
 	"github.com/GalbasiniMirko/todolist/backend/internal/utils/security"
 	"github.com/gin-gonic/gin"
@@ -22,13 +24,11 @@ func main() {
 	defer db.Close()
 	fmt.Println("Connected to the database!")
 
+	authHandler := handlers.NewAuthHandler(db)
+
 	r := gin.New()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	routes.SetupRoutes(r, authHandler)
 
 	port := security.GetEnvOrDefault("PORT", ":8080")
 	if err := r.Run(port); err != nil {
