@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func InitEnvFile() {
@@ -48,4 +49,14 @@ func GetEnvVariable(key string) string {
 	}
 
 	return value
+}
+
+func HashData(data string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(data), 14)
+	return string(bytes), err
+}
+
+func CheckDataHash(data, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(data), []byte(hash))
+	return err == nil
 }
