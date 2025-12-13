@@ -49,6 +49,6 @@ func GetUserByEmail(db *sql.DB, email string) (*User, error) {
 }
 
 func CreateRefreshToken(db *sql.DB, idUser int, token string, expiresAt time.Time) error {
-	_, err := db.Exec("INSERT INTO RefreshToken (IdUser, RefreshToken, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)", idUser, token, expiresAt, time.Now())
+	_, err := db.Exec("INSERT INTO RefreshTokens (IdUser, RefreshToken, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)", idUser, token, expiresAt, time.Now())
 	return err
 }
