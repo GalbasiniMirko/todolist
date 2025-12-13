@@ -9,5 +9,6 @@ func SetupRoutes(r *gin.Engine, authH *handlers.AuthHandler) {
 	authGroup := r.Group("/auth")
 	{
 		authGroup.POST("/signup", authH.Signup)
+		authGroup.POST("/login", authH.Login)
 	}
 }
