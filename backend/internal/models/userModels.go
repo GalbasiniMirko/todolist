@@ -12,6 +12,15 @@ type User struct {
 	CreatedAt    time.Time `json:"createdAt"`
 }
 
+type RefreshToken struct {
+	Id        int       `json:"id"`
+	IdUser    int       `json:"idUser"`
+	Token     string    `json:"refreshToken"`
+	ExpiresAt time.Time `json:"expiresAt"`
+	CreatedAt time.Time `json:"createdAt"`
+	Revoked   bool      `json:"revoked"`
+}
+
 func CreateUser(db *sql.DB, email string, passwordHash string) (int64, error) {
 	result, err := db.Exec("INSERT INTO Users (Email, PasswordHash, CreatedAt) VALUES (?, ?, ?)", email, passwordHash, time.Now())
 	if err != nil {
@@ -37,4 +46,9 @@ func GetUserByEmail(db *sql.DB, email string) (*User, error) {
 	}
 
 	return u, nil
+}
+
+func CreateRefreshToken(db *sql.DB, idUser int, token string, expiresAt time.Time) error {
+	_, err := db.Exec("INSERT INTO RefreshToken (IdUser, RefreshToken, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)", idUser, token, expiresAt, time.Now())
+	return err
 }

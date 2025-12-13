@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -59,4 +61,21 @@ func HashData(data string) (string, error) {
 func CheckDataHash(data, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(data), []byte(hash))
 	return err == nil
+}
+
+func GenerateToken(idUser int, duration time.Duration) (string, error) {
+	claims := jwt.MapClaims{
+		"sub": idUser,
+		"exp": time.Now().Add(duration).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secretKey := []byte(GetEnvVariable("JWT_SECRET"))
+
+	tokenString, err := token.SignedString(secretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

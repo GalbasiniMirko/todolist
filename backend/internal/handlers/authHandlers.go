@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"time"
 
 	"github.com/GalbasiniMirko/todolist/backend/internal/models"
 	"github.com/GalbasiniMirko/todolist/backend/internal/utils/security"
@@ -17,13 +18,13 @@ func NewAuthHandler(db *sql.DB) *AuthHandler {
 	return &AuthHandler{DB: db}
 }
 
-type signupRequest struct {
+type signupLoginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
 func (a *AuthHandler) Signup(c *gin.Context) {
-	var req signupRequest
+	var req signupLoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON: " + err.Error()})
@@ -51,5 +52,46 @@ func (a *AuthHandler) Signup(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"userId":  userId,
 		"message": "User created successfully",
+	})
+}
+
+func (a *AuthHandler) Login(c *gin.Context) {
+	var req signupLoginRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON: " + err.Error()})
+		return
+	}
+
+	user, err := models.GetUserByEmail(a.DB, req.Email)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid data"})
+		return
+	}
+
+	if !security.CheckDataHash(req.Password, user.PasswordHash) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid data"})
+		return
+	}
+
+	accessToken, err := security.GenerateToken(user.Id, 15*time.Minute)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating access token"})
+		return
+	}
+	refreshToken, err := security.GenerateToken(user.Id, 7*24*time.Hour)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating refresh token"})
+		return
+	}
+
+	if err := models.CreateRefreshToken(a.DB, user.Id, refreshToken, time.Now().Add(7*24*time.Hour)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating refresh token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"accessToken":  accessToken,
+		"refreshToken": refreshToken,
 	})
 }
