@@ -52,3 +52,16 @@ func CreateRefreshToken(db *sql.DB, idUser int, token string, expiresAt time.Tim
 	_, err := db.Exec("INSERT INTO RefreshTokens (IdUser, RefreshToken, ExpiresAt, CreatedAt) VALUES (?, ?, ?, ?)", idUser, token, expiresAt, time.Now())
 	return err
 }
+
+func GetRefreshToken(db *sql.DB, hashedToken string) (*RefreshToken, error) {
+	row := db.QueryRow("SELECT Id, IdUser, ExpiresAt FROM RefreshTokens WHERE RefreshToken = ? AND ExpiresAt > NOW()", hashedToken)
+
+	rt := &RefreshToken{}
+
+	err := row.Scan(&rt.Id, &rt.IdUser, &rt.ExpiresAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return rt, nil
+}
