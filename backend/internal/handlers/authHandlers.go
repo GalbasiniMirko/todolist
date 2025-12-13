@@ -85,7 +85,9 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if err := models.CreateRefreshToken(a.DB, user.Id, refreshToken, time.Now().Add(7*24*time.Hour)); err != nil {
+	hashedRefreshToken := security.HashToken(refreshToken)
+
+	if err := models.CreateRefreshToken(a.DB, user.Id, hashedRefreshToken, time.Now().Add(7*24*time.Hour)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating refresh token"})
 		return
 	}

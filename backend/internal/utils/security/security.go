@@ -1,6 +1,8 @@
 package security
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"log"
 	"os"
 	"path/filepath"
@@ -59,7 +61,7 @@ func HashData(data string) (string, error) {
 }
 
 func CheckDataHash(data, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(data), []byte(hash))
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(data))
 	return err == nil
 }
 
@@ -78,4 +80,9 @@ func GenerateToken(idUser int, duration time.Duration) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func HashToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }
