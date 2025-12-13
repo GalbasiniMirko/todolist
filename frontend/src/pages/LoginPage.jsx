@@ -49,7 +49,7 @@ function LoginPage() {
             localStorage.setItem("refreshToken", data.refreshToken);
 
             alert("Successfull login!");
-            navigate("/protected");
+            navigate("/homepage");
         } catch (err) {
             setError(err.message);
         }
