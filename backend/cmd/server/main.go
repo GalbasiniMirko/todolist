@@ -5,7 +5,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/GalbasiniMirko/todolist/backend/internal/handlers"
 	"github.com/GalbasiniMirko/todolist/backend/internal/routes"
 	"github.com/GalbasiniMirko/todolist/backend/internal/utils/database"
 	"github.com/GalbasiniMirko/todolist/backend/internal/utils/security"
@@ -26,8 +25,6 @@ func main() {
 	defer db.Close()
 	fmt.Println("Connected to the database!")
 
-	authHandler := handlers.NewAuthHandler(db)
-
 	r := gin.New()
 
 	r.Use(cors.New(cors.Config{
@@ -39,7 +36,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(r, authHandler)
+	routes.SetupRoutes(r, db)
 
 	port := security.GetEnvOrDefault("PORT", ":8080")
 	if err := r.Run(port); err != nil {
