@@ -1,6 +1,8 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type Task struct {
 	Id          int    `json:"id"`
@@ -28,6 +30,25 @@ func CreateTask(db *sql.DB, title string, description string, date string, time 
 
 func GetTasksByUser(db *sql.DB, idUser int) ([]Task, error) {
 	rows, err := db.Query("SELECT * FROM Tasks WHERE IdUser = ?", idUser)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []Task
+	for rows.Next() {
+		var t Task
+		if err := rows.Scan(&t.Id, &t.Title, &t.Description, &t.Date, &t.Time, &t.State, &t.IdUser); err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, t)
+	}
+
+	return tasks, nil
+}
+
+func GetTasksByDate(db *sql.DB, idUser int, date string) ([]Task, error) {
+	rows, err := db.Query("SELECT * FROM Tasks WHERE IdUser = ? AND Date = ?", idUser, date)
 	if err != nil {
 		return nil, err
 	}
