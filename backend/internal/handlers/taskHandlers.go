@@ -45,3 +45,31 @@ func (t *TaskHandler) GetTasksByDateHandler(c *gin.Context) {
 		"tasks": tasks,
 	})
 }
+
+func (t *TaskHandler) CreateTaskHandler(c *gin.Context) {
+	var newTask models.Task
+
+	if err := c.ShouldBindJSON(&newTask); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	idUserAny, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	newTask.IdUser = idUserAny.(int)
+	newTask.State = "To do"
+
+	id, err := models.CreateTask(t.DB, newTask)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create task"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"id": id,
+	})
+}

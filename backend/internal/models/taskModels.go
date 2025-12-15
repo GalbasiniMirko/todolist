@@ -14,8 +14,8 @@ type Task struct {
 	IdUser      int    `json:"idUser"`
 }
 
-func CreateTask(db *sql.DB, title string, description string, date string, time string, state string, idUser int) (int64, error) {
-	result, err := db.Exec("INSERT INTO Tasks (Title, Description, Date, Time, State, IdUser) VALUES (?, ?, ?, ?, ?, ?)", title, description, date, time, state, idUser)
+func CreateTask(db *sql.DB, task Task) (int64, error) {
+	result, err := db.Exec("INSERT INTO Tasks (Title, Description, Date, Time, State, IdUser) VALUES (?, ?, ?, ?, ?, ?)", task.Title, task.Description, task.Date, task.Time, task.State, task.IdUser)
 	if err != nil {
 		return 0, err
 	}
