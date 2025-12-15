@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import RequireAuth from "./components/RequireAuth";
 import VisualizeTasks from "./pages/VisualizeTasks";
+import AddTask from "./pages/AddTask";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       
       <Route element={<RequireAuth />}>
         <Route path="/homepage" element={<VisualizeTasks />} />
-        <Route path="/add" element={<h1 className="text-center mt-10">Add Task (Coming Soon)</h1>} />
+        <Route path="/add" element={<AddTask />} />
       </Route>
 
       <Route path="*" element={<h1 className="text-center mt-10">404 Page not found.</h1>} />
