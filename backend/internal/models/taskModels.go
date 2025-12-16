@@ -65,3 +65,20 @@ func GetTasksByDate(db *sql.DB, idUser int, date string) ([]Task, error) {
 
 	return tasks, nil
 }
+
+func UpdateTaskState(db *sql.DB, idUser int, idTask int, newState string) error {
+	result, err := db.Exec("UPDATE Tasks SET State = ? WHERE Id = ? AND IdUser = ?", newState, idTask, idUser)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return nil
+	}
+
+	return nil
+}

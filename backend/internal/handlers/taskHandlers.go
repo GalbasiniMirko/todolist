@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/GalbasiniMirko/todolist/backend/internal/models"
 	"github.com/gin-gonic/gin"
@@ -72,4 +73,40 @@ func (t *TaskHandler) CreateTaskHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"id": id,
 	})
+}
+
+func (t *TaskHandler) UpdateTaskHandler(c *gin.Context) {
+	idTaskString := c.Param("idTask")
+	if idTaskString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "idTask parameter is required"})
+		return
+	}
+
+	idTask, err := strconv.Atoi(idTaskString)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid idTask"})
+		return
+	}
+
+	var input struct {
+		State string `json:"state"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	idUserAny, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	idUser := idUserAny.(int)
+	if err := models.UpdateTaskState(t.DB, idUser, idTask, input.State); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update task"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Task updated"})
 }
