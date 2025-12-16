@@ -1,4 +1,4 @@
-function TaskList({ tasks }) {
+function TaskList({ tasks, onToggle }) {
     if (!tasks || tasks.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center mt-10 text-gray-400">
@@ -12,7 +12,7 @@ function TaskList({ tasks }) {
             {tasks.map((task, index) => (
                 <div
                     key={index}
-                    className={`w-full md:w-3/4 p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border-l-4 ${
+                    className={`w-full md:w-3/4 p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border-l-4 relative ${
                         task.state === "Done" ? "border-green-500 opacity-70" : "border-indigo-500"
                     }`}
                 >
@@ -20,15 +20,16 @@ function TaskList({ tasks }) {
                         <h3 className={`text-xl font-bold ${task.state === "Done" ? "line-through text-gray-500" : "text-gray-800"}`}>
                             {task.title}
                         </h3>
-                        <span
-                            className={`px-2 py-1 rounded text-xs font-bold uppercase ${
+                        <button
+                            onClick={() => onToggle(task.id, task.state)}
+                            className={`px-3 py-1 rounded-full text-xs font-bold uppercase transition-colors cursor-pointer border ${
                                 task.state === "Done"
-                                    ? "bg-green-100 text-green-700"
-                                    : "bg-indigo-100 text-indigo-700"
+                                    ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
+                                    : "bg-indigo-100 text-indigo-700 border-indigo-200 hover:bg-indigo-200"
                             }`}
                         >
-                            {task.state}
-                        </span>
+                            {task.state === "Done" ? "Done" : "To do"}
+                        </button>
                     </div>
 
                     {task.time && (

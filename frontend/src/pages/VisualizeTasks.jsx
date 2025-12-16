@@ -49,6 +49,33 @@ function VisualizeTasks() {
 
     }, [selectedDate, navigate]);
 
+    const toggleTask = async (taskId, currentState) => {
+
+        const newState = currentState === "To do" ? "Done" : "To do";
+        setTasks(prevTask => prevTask.map(task => 
+            task.id === taskId ? {...task, state: newState} : task
+        ));
+
+        const token = localStorage.getItem("token");
+        try {
+            const response = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({state: newState})
+            });
+
+            if (!response.ok) {
+                throw new Error("Update error");
+            }
+        } catch (error) {
+            console.error("Update error:", error);
+            alert("Unable to update the task. Try again!");
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
@@ -62,7 +89,7 @@ function VisualizeTasks() {
                 <DaySelector onDateChange={handleDateChange} />
                 
                 <div className="mt-6">
-                    <TaskList tasks={tasks} />
+                    <TaskList tasks={tasks} onToggle={toggleTask} />
                 </div>
             </div>
         </div>
