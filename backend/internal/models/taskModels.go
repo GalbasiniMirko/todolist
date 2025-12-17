@@ -82,3 +82,20 @@ func UpdateTaskState(db *sql.DB, idUser int, idTask int, newState string) error 
 
 	return nil
 }
+
+func DeleteTask(db *sql.DB, idUser int, idTask int) error {
+	result, err := db.Exec("DELETE FROM Tasks WHERE Id = ? AND IdUser = ?", idTask, idUser)
+	if err != nil {
+		return err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}

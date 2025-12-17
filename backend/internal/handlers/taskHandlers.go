@@ -110,3 +110,31 @@ func (t *TaskHandler) UpdateTaskHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Task updated"})
 }
+
+func (t *TaskHandler) DeleteTaskHandler(c *gin.Context) {
+	idTaskString := c.Param("idTask")
+	if idTaskString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "idTask parameter is required"})
+		return
+	}
+
+	idTask, err := strconv.Atoi(idTaskString)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	idUserAny, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	idUser := idUserAny.(int)
+	if err := models.DeleteTask(t.DB, idUser, idTask); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not delete task"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Task deleted!"})
+}
