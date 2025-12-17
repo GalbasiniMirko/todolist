@@ -76,6 +76,28 @@ function VisualizeTasks() {
         }
     }
 
+    const deleteTask = async (idTask) => {
+        const oldTask = [...tasks];
+        setTasks(prev => prev.filter(t => t.id !== idTask));
+
+        const token = localStorage.getItem("token");
+        try {
+            const response = await fetch(`http://localhost:8080/api/tasks/${idTask}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) throw new Error("Delete error!");
+        } catch (error) {
+            console.error("Delete error:", error);
+            alert("Error deleting task. Try again!");
+            setTasks(oldTask);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Navbar />
@@ -89,7 +111,7 @@ function VisualizeTasks() {
                 <DaySelector onDateChange={handleDateChange} />
                 
                 <div className="mt-6">
-                    <TaskList tasks={tasks} onToggle={toggleTask} />
+                    <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
                 </div>
             </div>
         </div>
