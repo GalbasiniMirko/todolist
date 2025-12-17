@@ -54,7 +54,7 @@ func CreateRefreshToken(db *sql.DB, idUser int, token string, expiresAt time.Tim
 }
 
 func GetRefreshToken(db *sql.DB, hashedToken string) (*RefreshToken, error) {
-	row := db.QueryRow("SELECT Id, IdUser, ExpiresAt FROM RefreshTokens WHERE RefreshToken = ? AND ExpiresAt > NOW()", hashedToken)
+	row := db.QueryRow("SELECT Id, IdUser, ExpiresAt FROM RefreshTokens WHERE RefreshToken = ? AND ExpiresAt > NOW() AND Revoked = FALSE", hashedToken)
 
 	rt := &RefreshToken{}
 
@@ -64,4 +64,9 @@ func GetRefreshToken(db *sql.DB, hashedToken string) (*RefreshToken, error) {
 	}
 
 	return rt, nil
+}
+
+func RevokeRefreshToken(db *sql.DB, hashedToken string) error {
+	_, err := db.Exec("UPDATE RefreshTokens SET Revoked = TRUE WHERE RefreshToken = ?", hashedToken)
+	return err
 }
