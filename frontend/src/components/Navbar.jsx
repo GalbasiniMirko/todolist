@@ -4,7 +4,7 @@ function Navbar() {
     return (
         <nav className="w-full bg-white shadow px-6 py-4 flex items-center justify-between sticky top-0 z-50">
             <div className="text-2xl font-extrabold text-indigo-600">
-                <NavLink to="/dashboard">ToDoList</NavLink>
+                <NavLink to="/homepage">ToDoList</NavLink>
             </div>
             <div className="flex gap-6 text-lg font-medium">
                 <NavLink
