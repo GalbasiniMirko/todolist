@@ -141,3 +141,22 @@ func (a *AuthHandler) Refresh(c *gin.Context) {
 		"accessToken": newAccessToken,
 	})
 }
+
+func (a *AuthHandler) Logout(c *gin.Context) {
+	var input struct {
+		RefreshToken string `json:"refreshToken" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token required"})
+		return
+	}
+
+	err := models.RevokeRefreshToken(a.DB, input.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not process logout"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully!"})
+}

@@ -20,6 +20,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 		authGroup.POST("/signup", authHandler.Signup)
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/refresh", authHandler.Refresh)
+		authGroup.POST("/logout", authHandler.Logout)
 	}
 
 	protected := api.Group("/")
