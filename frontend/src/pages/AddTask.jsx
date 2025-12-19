@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { authenticatedFetch } from "../utils/api";
 
 function AddTask() {
     const navigate = useNavigate();
@@ -24,19 +25,9 @@ function AddTask() {
         e.preventDefault();
         setError("");
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         try {
-            const response = await fetch("http://localhost:8080/api/tasks", {
+            const response = await authenticatedFetch("http://localhost:8080/api/tasks", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
                 body: JSON.stringify(formData)
             });
 

@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import DaySelector from "../components/DaySelector";
 import TaskList from "../components/TaskList";
 import { useNavigate } from "react-router-dom";
+import { authenticatedFetch } from "../utils/api";
 
 function VisualizeTasks() {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -16,36 +17,22 @@ function VisualizeTasks() {
     useEffect(() => {
         if (!selectedDate) return;
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            navigate("/login");
-            return;
-        }
+        const fetchTasks = async () => {
+            try {
+                const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${selectedDate}`);
 
-        fetch(`http://localhost:8080/api/tasks/${selectedDate}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                if (!response.ok) {
+                    throw new Error("Error loading tasks");
+                }
+
+                const data = await response.json();
+                setTasks(data.tasks || []);
+            } catch (err) {
+                console.error("Network or authentication failure", err);
             }
-        })
-        .then(res => {
-            if (res.status === 401) {
-                console.error("Invalido or expired token");
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                navigate("/login");
-                throw new Error("Unauthorized");
-            }
-            if (!res.ok) throw new Error("Fetch error");
-            return res.json();
-        })
-        .then(data => {
-            setTasks(data.tasks || []);
-        })
-        .catch(err => {
-            console.error("Network or authentication error", err);
-        });
+        };
+
+        fetchTasks();
 
     }, [selectedDate, navigate]);
 
@@ -56,15 +43,10 @@ function VisualizeTasks() {
             task.id === taskId ? {...task, state: newState} : task
         ));
 
-        const token = localStorage.getItem("token");
         try {
-            const response = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+            const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${taskId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({state: newState})
+                body: JSON.stringify({ state: newState })
             });
 
             if (!response.ok) {
@@ -80,14 +62,9 @@ function VisualizeTasks() {
         const oldTask = [...tasks];
         setTasks(prev => prev.filter(t => t.id !== idTask));
 
-        const token = localStorage.getItem("token");
         try {
-            const response = await fetch(`http://localhost:8080/api/tasks/${idTask}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
+            const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${idTask}`, {
+                method: "DELETE"
             });
 
             if (!response.ok) throw new Error("Delete error!");
