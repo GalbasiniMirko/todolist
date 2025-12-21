@@ -1,5 +1,9 @@
-export const authenticatedFetch = async (url, options = {}) => {
+export const API_BASE_URL= import.meta.env.API_BASE_URL || "http://localhost:8080";
+
+export const authenticatedFetch = async (endpoint, options = {}) => {
     let accessToken = localStorage.getItem("token");
+
+    const url = endpoint.startsWith("http") ? endpoint : `${API_BASE_URL}${endpoint}`;
 
     const headers = {
         "Content-Type": "application/json",
@@ -11,15 +15,15 @@ export const authenticatedFetch = async (url, options = {}) => {
 
     if (response.status === 401) {
         console.log("Expired access token, refresh attempt...");
-
         const refreshToken = localStorage.getItem("refreshToken");
+
         if(!refreshToken) {
             window.location.href = "/login";
             return response;
         }
 
         try {
-            const refreshResponse = await fetch("http://localhost:8080/api/auth/refresh", {
+            const refreshResponse = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ refreshToken }),

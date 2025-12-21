@@ -19,7 +19,7 @@ function VisualizeTasks() {
 
         const fetchTasks = async () => {
             try {
-                const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${selectedDate}`);
+                const response = await authenticatedFetch(`/api/tasks/${selectedDate}`);
 
                 if (!response.ok) {
                     throw new Error("Error loading tasks");
@@ -44,7 +44,7 @@ function VisualizeTasks() {
         ));
 
         try {
-            const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${taskId}`, {
+            const response = await authenticatedFetch(`/api/tasks/${taskId}`, {
                 method: "PUT",
                 body: JSON.stringify({ state: newState })
             });
@@ -63,7 +63,7 @@ function VisualizeTasks() {
         setTasks(prev => prev.filter(t => t.id !== idTask));
 
         try {
-            const response = await authenticatedFetch(`http://localhost:8080/api/tasks/${idTask}`, {
+            const response = await authenticatedFetch(`/api/tasks/${idTask}`, {
                 method: "DELETE"
             });
 

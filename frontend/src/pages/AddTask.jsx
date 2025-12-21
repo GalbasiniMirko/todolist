@@ -26,7 +26,7 @@ function AddTask() {
         setError("");
 
         try {
-            const response = await authenticatedFetch("http://localhost:8080/api/tasks", {
+            const response = await authenticatedFetch("/api/tasks", {
                 method: "POST",
                 body: JSON.stringify(formData)
             });
