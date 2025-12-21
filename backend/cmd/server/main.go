@@ -27,8 +27,10 @@ func main() {
 
 	r := gin.New()
 
+	allowedOrigin := security.GetEnvOrDefault("ALLOWED_ORIGIN", "http://localhost:5173")
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     []string{allowedOrigin},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-length"},
