@@ -1,0 +1,42 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: todolist-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "${DB_EXTERNAL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    image: todolist-backend:latest
+    container_name: todolist-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=${PORT}
+      - GIN_MODE=${GIN_MODE}
+      - ALLOWED_ORIGIN=${ALLOWED_ORIGIN}
+      - DSN=root:${MYSQL_ROOT_PASSWORD}@tcp(todolist-db:3306)/${MYSQL_DATABASE}?parseTime=true
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    image: todolist-frontend:latest
+    container_name: todolist-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
