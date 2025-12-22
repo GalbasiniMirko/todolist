@@ -27,6 +27,9 @@ func main() {
 
 	r := gin.New()
 
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+
 	allowedOrigin := security.GetEnvOrDefault("ALLOWED_ORIGIN", "http://localhost:5173")
 
 	r.Use(cors.New(cors.Config{
