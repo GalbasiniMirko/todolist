@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { authenticatedFetch } from "../utils/api";
 
@@ -46,7 +46,18 @@ function AddTask() {
         <div className="min-h-screen bg-gray-50">
             <Navbar />
             <div className="p-6 max-w-lg mx-auto">
-                <div className="bg-white p-8 rounded-2xl shadow-lg">
+                
+                <Link 
+                    to="/homepage" 
+                    className="inline-flex items-center text-gray-500 hover:text-indigo-600 transition-colors mb-6 font-medium"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 mr-2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    Back to Tasks
+                </Link>
+
+                <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
                     <h1 className="text-2xl font-bold mb-6 text-gray-800">New activity</h1>
                     
                     {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -62,7 +73,7 @@ function AddTask() {
                                 value={formData.title}
                                 onChange={handleChange}
                                 placeholder="E.g. Shopping"
-                                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                             />
                         </div>
 
@@ -73,7 +84,7 @@ function AddTask() {
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Additional details..."
-                                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none h-24 resize-none"
+                                className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none h-24 resize-none transition-all"
                             />
                         </div>
 
@@ -86,7 +97,7 @@ function AddTask() {
                                     required
                                     value={formData.date}
                                     onChange={handleChange}
-                                    className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                 />
                             </div>
 
@@ -98,14 +109,14 @@ function AddTask() {
                                     required
                                     value={formData.time}
                                     onChange={handleChange}
-                                    className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                                    className="w-full border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                 />
                             </div>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-indigo-700 transition shadow-md"
+                            className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl mt-4 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all shadow-md"
                         >
                             Save Task
                         </button>
