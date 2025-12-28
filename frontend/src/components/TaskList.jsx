@@ -7,9 +7,15 @@ function TaskList({ tasks, onToggle, onDelete }) {
         );
     }
 
+    const sortedTasks = [...tasks].sort((a, b) => {
+        if (!a.time) return 1;
+        if (!b.time) return -1;
+        return a.time.localeCompare(b.time);
+    });
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4 pb-20">
-            {tasks.map((task, index) => (
+            {sortedTasks.map((task, index) => (
                 <div
                     key={index}
                     className={`p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border-l-4 relative h-full flex flex-col justify-between ${
