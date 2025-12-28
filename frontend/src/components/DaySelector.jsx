@@ -35,23 +35,27 @@ function DaySelector({ onDateChange }) {
     const daysShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     return (
-        <div className="w-full py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex gap-2 bg-white shadow-sm p-2 rounded-xl overflow-x-auto w-full md:w-auto justify-center">
+        <div className="w-full flex flex-col xl:flex-row items-center justify-between gap-4">
+            <div className="grid grid-cols-7 gap-1 w-full xl:w-auto xl:flex xl:gap-2 bg-white shadow-sm p-1.5 rounded-xl justify-center">
                 {week.map((day, i) => {
                     const isSelected = day.toDateString() === selectedDate.toDateString();
                     return (
                         <button
                             key={i}
                             onClick={() => setSelectedDate(day)}
-                            className={`px-4 py-2 rounded-lg transition-all text-center min-w-[60px] ${
+                            className={`flex flex-col items-center justify-center p-1 rounded-lg transition-all w-full xl:w-auto xl:px-4 xl:py-2 ${
                                 isSelected
                                     ? "bg-indigo-600 text-white shadow-md scale-105"
                                     : "hover:bg-gray-100 text-gray-600"
                             }`}
                         >
-                            <span className="text-xs font-bold uppercase">{daysShort[i]}</span>
-                            <br />
-                            <span className="text-lg font-semibold">{day.getDate()}</span>
+                            <span className="text-[10px] sm:text-xs font-bold uppercase block opacity-80">
+                                {daysShort[i]}
+                            </span>
+                            
+                            <span className="text-sm sm:text-base xl:text-xl font-bold block leading-tight">
+                                {day.getDate()}
+                            </span>
                         </button>
                     );
                 })}
@@ -60,7 +64,7 @@ function DaySelector({ onDateChange }) {
             <input
                 type="date"
                 value={formatLocalDate(selectedDate)}
-                className="border border-gray-300 p-2 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700"
+                className="w-full xl:w-auto border border-gray-300 p-2.5 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700 font-medium text-sm"
                 onChange={(e) => {
                     if (e.target.value) setSelectedDate(new Date(e.target.value));
                 }}

@@ -85,21 +85,20 @@ function VisualizeTasks() {
                     <p className="text-gray-500">Select a day to see what needs to be done.</p>
                 </div>
 
-                <div className="flex items-center justify-between mb-6 w-full">
-                    
-                    <div>
+                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6 w-full">
+    
+                    <div className="w-full md:w-auto">
                         <DaySelector onDateChange={handleDateChange} />
                     </div>
 
                     <Link 
-                        to="/add" 
-                        className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-indigo-700 hover:scale-105 transition-all duration-200 flex items-center gap-2 shrink-0"
+                        to="/add"
+                        className="bg-indigo-600 text-white px-5 py-3 md:py-2.5 rounded-xl shadow-md hover:bg-indigo-700 hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2 shrink-0 w-full md:w-auto"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
-
-                        <span className="font-bold text-sm sm:text-base">New Task</span>
+                        <span className="font-bold">New Task</span>
                     </Link>
                 </div>
 
