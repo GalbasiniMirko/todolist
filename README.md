@@ -4,7 +4,18 @@ A modern Full-Stack task management application, built with a containerized micr
 
 The project demonstrates complete integration between a high-performance **Go (Gin)** backend, a reactive **React** frontend, and a **MySQL** database, all orchestrated via **Docker**.
 
-### Project screenshot
+## 📸 Project screenshot
+### Desktop Dashboard
+The main hub where you can view, manage, and track all your daily tasks at a glance.
+
+![Desktop Dashboard](./assets/dashboard.png)
+<br>
+### Mobile View & Edit Task
+Fully responsive design for on-the-go access, plus a dedicated form to update your activities easily.
+
+| Mobile View | Edit Task Form |
+| :---: | :---: |
+| ![Mobile View](./assets/mobileView.png) | ![Edit Task Form](./assets/editTaskForm.png) |
 
 ## 🚀 Tech Stack
 
