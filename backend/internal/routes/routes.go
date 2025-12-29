@@ -37,6 +37,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 		protected.GET("/tasks/:date", taskHandler.GetTasksByDateHandler)
 		protected.POST("/tasks", taskHandler.CreateTaskHandler)
 		protected.PUT("/tasks/:idTask", taskHandler.UpdateTaskHandler)
+		protected.PATCH("/tasks/:idTask/state", taskHandler.UpdateTaskStateHandler)
 		protected.DELETE("/tasks/:idTask", taskHandler.DeleteTaskHandler)
 	}
 }

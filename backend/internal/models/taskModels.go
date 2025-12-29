@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 )
 
 type Task struct {
@@ -78,6 +79,23 @@ func UpdateTaskState(db *sql.DB, idUser int, idTask int, newState string) error 
 	}
 	if rowsAffected == 0 {
 		return nil
+	}
+
+	return nil
+}
+
+func UpdateTask(db *sql.DB, task Task) error {
+	result, err := db.Exec("UPDATE Tasks SET Title = ?, Description = ?, Date = ?, Time = ? WHERE Id = ? AND IdUser = ?", task.Title, task.Description, task.Date, task.Time, task.Id, task.IdUser)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("task not found or unauthorized")
 	}
 
 	return nil

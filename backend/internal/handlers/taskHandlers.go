@@ -75,7 +75,7 @@ func (t *TaskHandler) CreateTaskHandler(c *gin.Context) {
 	})
 }
 
-func (t *TaskHandler) UpdateTaskHandler(c *gin.Context) {
+func (t *TaskHandler) UpdateTaskStateHandler(c *gin.Context) {
 	idTaskString := c.Param("idTask")
 	if idTaskString == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "idTask parameter is required"})
@@ -104,6 +104,48 @@ func (t *TaskHandler) UpdateTaskHandler(c *gin.Context) {
 
 	idUser := idUserAny.(int)
 	if err := models.UpdateTaskState(t.DB, idUser, idTask, input.State); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update task"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Task updated"})
+}
+
+func (t *TaskHandler) UpdateTaskHandler(c *gin.Context) {
+	idTaskString := c.Param("idTask")
+	if idTaskString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "idTask parameter is required"})
+		return
+	}
+
+	idTask, err := strconv.Atoi(idTaskString)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid idTask"})
+		return
+	}
+
+	var input models.Task
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	idUserAny, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	idUser := idUserAny.(int)
+	input.IdUser = idUser
+	input.Id = idTask
+
+	if err := models.UpdateTask(t.DB, input); err != nil {
+
+		if err.Error() == "task not found or unauthorized" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update task"})
 		return
 	}
