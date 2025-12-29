@@ -44,8 +44,8 @@ function VisualizeTasks() {
         ));
 
         try {
-            const response = await authenticatedFetch(`/api/tasks/${taskId}`, {
-                method: "PUT",
+            const response = await authenticatedFetch(`/api/tasks/${taskId}/state`, {
+                method: "PATCH",
                 body: JSON.stringify({ state: newState })
             });
 
