@@ -28,7 +28,9 @@ function TaskList({ tasks, onToggle, onDelete }) {
                 >
                     <div>
                         <div className="flex items-start justify-between mb-2 gap-3">
-                            <h3 className={`text-xl font-bold leading-tight max-h-24 overflow-y-auto custom-scrollbar break-all pr-1 ${task.state === "Done" ? "line-through text-gray-500" : "text-gray-800"}`}>
+                            <h3 className={`text-xl font-bold leading-tight line-clamp-3 break-all  ${task.state === "Done" ? "line-through text-gray-500" : "text-gray-800"}`}
+                                title={task.title}
+                            >
                                 {task.title}
                             </h3>
                             
