@@ -70,6 +70,7 @@ function AddTask() {
                                 type="text"
                                 name="title"
                                 required
+                                maxLength={100}
                                 value={formData.title}
                                 onChange={handleChange}
                                 placeholder="E.g. Shopping"
@@ -81,6 +82,7 @@ function AddTask() {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
                             <textarea
                                 name="description"
+                                maxLength={300}
                                 value={formData.description}
                                 onChange={handleChange}
                                 placeholder="Additional details..."
