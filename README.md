@@ -73,6 +73,7 @@ Security is managed via a centralized .env file (ignored by Git). Here are the m
 | PORT | Backend Port | :8080 |
 | JWT_SECRET | JWT Signing Secret | change_me_please_this_is_insecure |
 | ALLOWED_ORIGIN | Frontend Endpoint (CORS) | [http://localhost:5173](http://localhost:5173) |
+| VITE_API_BASE_URL | Backend Endpoint | `http://localhost:8080` |
 
 ## 🗄️ Database & Persistence
  - Automatic Initialization: On first launch, the database/init.sql script automatically creates the **users** and **tasks** tables.
