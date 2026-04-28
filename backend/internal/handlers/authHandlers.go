@@ -95,23 +95,20 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken":  accessToken,
-		"refreshToken": refreshToken,
-	})
+	c.SetCookie("accessToken", accessToken, 15*60, "/", "", false, true)
+	c.SetCookie("refreshToken", refreshToken, 7*24*60*60, "/", "", false, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
 func (a *AuthHandler) Refresh(c *gin.Context) {
-	var input struct {
-		RefreshToken string `json:"refreshToken" binding:"required"`
-	}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token required"})
+	refreshTokenStr, err := c.Cookie("refreshToken")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token missing from cookies"})
 		return
 	}
 
-	token, err := jwt.Parse(input.RefreshToken, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(refreshTokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
@@ -123,7 +120,7 @@ func (a *AuthHandler) Refresh(c *gin.Context) {
 		return
 	}
 
-	hashedToken := security.HashToken(input.RefreshToken)
+	hashedToken := security.HashToken(refreshTokenStr)
 
 	rt, err := models.GetRefreshToken(a.DB, hashedToken)
 	if err != nil {
@@ -137,26 +134,19 @@ func (a *AuthHandler) Refresh(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken": newAccessToken,
-	})
+	c.SetCookie("accessToken", newAccessToken, 15*60, "/", "", false, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Token refreshed successfully"})
 }
 
 func (a *AuthHandler) Logout(c *gin.Context) {
-	var input struct {
-		RefreshToken string `json:"refreshToken" binding:"required"`
-	}
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Refresh token required"})
-		return
-	}
-
-	err := models.RevokeRefreshToken(a.DB, input.RefreshToken)
+	refreshTokenStr, err := c.Cookie("refreshToken")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not process logout"})
-		return
+		_ = models.RevokeRefreshToken(a.DB, refreshTokenStr)
 	}
+
+	c.SetCookie("accessToken", "", -1, "/", "", false, true)
+	c.SetCookie("refreshToken", "", -1, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully!"})
 }
