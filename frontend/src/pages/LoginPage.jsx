@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../utils/api";
+import { VITE_API_BASE_URL } from "../utils/api";
 
 function LoginPage() {
     const navigate = useNavigate();
@@ -29,11 +29,12 @@ function LoginPage() {
         setError("");
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+            const response = await fetch(`${VITE_API_BASE_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password
@@ -46,8 +47,7 @@ function LoginPage() {
                 throw new Error(data.error || "Error during registration");
             }
 
-            localStorage.setItem("token", data.accessToken);
-            localStorage.setItem("refreshToken", data.refreshToken);
+            localStorage.setItem("isLoggedIn", "true");
 
             alert("Successfull login!");
             navigate("/homepage");
